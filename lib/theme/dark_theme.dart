@@ -33,7 +33,7 @@ ThemeData darkTheme(int scaleIndex) {
     ),
 
     cardTheme: CardThemeData(
-      color: const Color.fromARGB(255, 209, 209, 209),
+      color: const Color.fromARGB(255, 40, 40, 40),
       elevation: 1,
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(

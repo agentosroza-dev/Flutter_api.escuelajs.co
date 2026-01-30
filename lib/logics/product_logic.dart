@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 import '../models/product_model.dart';
 import '../services/product_service.dart';
 
 class ProductLogic extends ChangeNotifier {
+  final logger = Logger();
   List<Product> _products = [];
   List<Product> get products => _products;
 
@@ -47,7 +49,7 @@ class ProductLogic extends ChangeNotifier {
       //all
       newlist = await _service.getProducts(page: _page);
     } else {
-      newlist = await _service.filterProductsByCategoryid(
+      newlist = await _service.filterProductsByCategoryId(
         cid: _catId,
         page: _page,
       );
@@ -61,7 +63,9 @@ class ProductLogic extends ChangeNotifier {
       _hasMoreRecords = false;
     }
     _loading = false;
+
+    logger.d(_products);
+    logger.i(_page);
     notifyListeners();
   }
-
 }

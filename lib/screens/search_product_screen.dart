@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_platzi/logics/category_logic.dart';
+import 'package:my_platzi/widgets/my_3line_card.dart';
 import 'package:my_platzi/widgets/my_loud_more.dart';
 import '../logics/search_product_logic.dart';
-import '../models/category_model.dart';
-import '../widgets/my_simple_card.dart';
 import '../widgets/my_loading.dart';
 import 'package:provider/provider.dart';
 
@@ -84,28 +82,34 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
   final _searchCtrl = TextEditingController();
 
   Widget _buildSearchBar() {
-    return SearchBar(
-      controller: _searchCtrl,
-      hintText: "Search...",
-      leading: Icon(Icons.search),
-      trailing: [
-        IconButton(
-          onPressed: () {
-            _searchCtrl.clear();
-            _searchedText = "";
-          },
-          icon: Icon(Icons.cancel_outlined),
-        ),
-      ],
-      textInputAction: TextInputAction.search,
-      onSubmitted: (String text) {
-        _searchedText = text;
-        context.read<SearchProductLogic>().setLoading();
-        context.read<SearchProductLogic>().searchProductTitlePagination(
-          title: text.trim(),
-          refresh: true,
-        );
-      },
+    return SizedBox(
+      height: kMinInteractiveDimension,
+      child: SearchBar(
+        controller: _searchCtrl,
+        hintText: "Search...",
+        leading: Icon(Icons.search),
+        trailing: [
+          IconButton(
+            onPressed: () {
+              _searchCtrl.clear();
+              _searchedText = "";
+            },
+            icon: Icon(Icons.cancel_outlined),
+          ),
+        ],
+        textInputAction: TextInputAction.search,
+        onSubmitted: (String text) {
+          _searchedText = text.trim();
+          if (_searchedText.isNotEmpty) {
+            context.read<SearchProductLogic>().setLoading();
+            context.read<SearchProductLogic>().getCategoriesByTitleSearched(title: _searchedText);
+            context.read<SearchProductLogic>().searchProductTitlePagination(
+              title: _searchedText.trim(),
+              refresh: true,
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -125,7 +129,7 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
       onRefresh: () async {
         context.read<SearchProductLogic>().resetCatId();
         context.read<SearchProductLogic>().setLoading();
-        context.read<CategoryLogic>().read();
+        context.read<SearchProductLogic>().getCategoriesByTitleSearched(title: _searchedText);
         context.read<SearchProductLogic>().searchProductTitlePagination(
           title: _searchedText,
           refresh: true,
@@ -143,8 +147,9 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
     );
   }
 
+
   Widget _buildCategoryList() {
-    List<Cat> items = context.watch<CategoryLogic>().cats;
+    List<Category> items = context.watch<SearchProductLogic>().filteredCats;
 
     return SizedBox(
       height: kMinInteractiveDimension, // = 48.0
@@ -214,7 +219,8 @@ class _SearchProductScreenState extends State<SearchProductScreen> {
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
-          return MySimpleCard(context, item.images[0], item.title);
+          // return MySimpleCard(context, item.images[0], item.title);
+          return My3LineCard(context, item.images[0], item.title, item.category.name, "USD \$${item.price}");
         },
       );
     }

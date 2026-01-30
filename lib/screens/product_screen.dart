@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_platzi/widgets/my_3line_card.dart';
 import 'package:provider/provider.dart';
 import '../logics/category_logic.dart';
 import '../widgets/my_loud_more.dart';
 import '../models/category_model.dart';
-import '../widgets/my_simple_card.dart';
 import '../logics/product_logic.dart';
 import '../widgets/my_loading.dart';
 
@@ -182,7 +182,7 @@ class _ProductScreenState extends State<ProductScreen> {
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
-          return MySimpleCard(context, item.images[0], item.title);
+                   return My3LineCard(context, item.images[0], item.title, item.category.name, "USD \$${item.price}");
         },
       );
     }
