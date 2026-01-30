@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:my_platzi/logics/category_logic.dart';
 import 'package:my_platzi/widgets/my_3line_card.dart';
-import 'package:provider/provider.dart';
-import '../logics/category_logic.dart';
-import '../widgets/my_loud_more.dart';
+import 'package:my_platzi/widgets/my_loud_more.dart';
 import '../models/category_model.dart';
+
 import '../logics/product_logic.dart';
 import '../widgets/my_loading.dart';
-
+import 'package:provider/provider.dart';
 
 import '../models/product_model.dart';
 
@@ -20,7 +20,6 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
   final _scroller = ScrollController();
   bool _showUpIcon = false;
-  bool _isGrid = false;
 
   @override
   void initState() {
@@ -56,10 +55,12 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 
+  bool _isGrid = true;
+
   @override
   Widget build(BuildContext context) {
-    // final logo =
-    //     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNRHMRbBL8BAcMYo3mmhwF-yp9Qku7B6v0hQ&s";
+    final logo =
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNRHMRbBL8BAcMYo3mmhwF-yp9Qku7B6v0hQ&s";
     return Scaffold(
       appBar: AppBar(
         title: Text("TEN11"),
@@ -72,13 +73,73 @@ class _ProductScreenState extends State<ProductScreen> {
             },
             icon: Icon(_isGrid ? Icons.grid_on : Icons.list),
           ),
+          IconButton(
+            onPressed: () async {
+              bool applied = await _showTuneDialog() ?? false;
+              debugPrint("applied: $applied");
+              if (applied) {
+                context.read<ProductLogic>().setLoading();
+                context.read<ProductLogic>().readProductPagination(
+                  refresh: true,
+                  minPrice: int.parse(_minCtrl.text.trim()),
+                  maxPrice: int.parse(_maxCtrl.text.trim()),
+                );
+              }
+            },
+            icon: Icon(Icons.tune),
+          ),
         ],
       ),
-
       body: _buildBody(),
       floatingActionButton: _showUpIcon ? _buildFloating() : null,
     );
   }
+final _minCtrl = TextEditingController();
+  final _maxCtrl = TextEditingController();
+
+  Future<bool?> _showTuneDialog() {
+    return showDialog<bool?>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Set Price Range"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _minCtrl,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.currency_exchange),
+                  hintText: "Enter min price",
+                  border: OutlineInputBorder()
+                ),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                controller: _maxCtrl,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.currency_exchange),
+                  hintText: "Enter max price",
+                  border: OutlineInputBorder()
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text("Apply"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   Widget _buildBody() {
     //remove this code
@@ -124,9 +185,6 @@ class _ProductScreenState extends State<ProductScreen> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                elevation: _selectedId == item.id ? 0 : 1,
-              ),
               onPressed: _selectedId == item.id
                   ? null
                   : () {
@@ -137,8 +195,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         refresh: true,
                       );
                     },
-
-              child: Text("${item.id}, ${item.name}"),
+              child: Text(item.name),
             ),
           );
         },
@@ -182,7 +239,13 @@ class _ProductScreenState extends State<ProductScreen> {
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
-                   return My3LineCard(context, item.images[0], item.title, item.category.name, "USD \$${item.price}");
+          return My3LineCard(
+            context,
+            item.images[0],
+            item.title,
+            item.category.name,
+            "USD \$${item.price}",
+          );
         },
       );
     }
