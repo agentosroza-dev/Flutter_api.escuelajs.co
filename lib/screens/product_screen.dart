@@ -7,7 +7,6 @@ import '../models/category_model.dart';
 import '../logics/product_logic.dart';
 import '../widgets/my_loading.dart';
 
-
 import '../models/product_model.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -71,6 +70,18 @@ class _ProductScreenState extends State<ProductScreen> {
               });
             },
             icon: Icon(_isGrid ? Icons.grid_on : Icons.list),
+          ),
+          IconButton(
+            onPressed: () async {
+              bool applied = await _showTuneDialog() ?? false;
+              debugPrint("applied: $applied");
+              if (applied) {
+                //do something
+              } else {
+                //do something else
+              }
+            },
+            icon: Icon(Icons.tune),
           ),
         ],
       ),
@@ -182,9 +193,61 @@ class _ProductScreenState extends State<ProductScreen> {
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
-                   return My3LineCard(context, item.images[0], item.title, item.category.name, "USD \$${item.price}");
+          return My3LineCard(
+            context,
+            item.images[0],
+            item.title,
+            item.category.name,
+            "USD \$${item.price}",
+          );
         },
       );
     }
+  }
+
+  final _minCtrl = TextEditingController();
+  final _maxCtrl = TextEditingController();
+
+  Future<bool?> _showTuneDialog() {
+    return showDialog<bool?>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Set Price Range"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _minCtrl,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.currency_exchange),
+                  hintText: "Enter min price",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 8),
+              TextField(
+                controller: _maxCtrl,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.currency_exchange),
+                  hintText: "Enter max price",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text("Apply"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

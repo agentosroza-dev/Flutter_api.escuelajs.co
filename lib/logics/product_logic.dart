@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 import '../models/product_model.dart';
 import '../services/product_service.dart';
 
 class ProductLogic extends ChangeNotifier {
-  final logger = Logger();
   List<Product> _products = [];
   List<Product> get products => _products;
 
@@ -37,7 +35,12 @@ class ProductLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future readProductPagination({bool refresh = false}) async {
+  Future readProductPagination({
+    bool refresh = false,
+    int limit = 20,
+    int? minPrice,
+    int? maxPrice,
+  }) async {
     if (refresh) {
       _page = 0;
       _products = [];
@@ -47,25 +50,25 @@ class ProductLogic extends ChangeNotifier {
 
     if (_catId == '-1') {
       //all
-      newlist = await _service.getProducts(page: _page);
+      newlist = await _service.getProducts(
+        page: _page,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+      );
     } else {
       newlist = await _service.filterProductsByCategoryId(
         cid: _catId,
         page: _page,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
       );
     }
 
-    if (newlist.isNotEmpty) {
-      _products += newlist;
-      _page++;
-      _hasMoreRecords = true;
-    } else {
-      _hasMoreRecords = false;
-    }
-    _loading = false;
+    _products += newlist;
+    _page++;
 
-    logger.d(_products);
-    logger.i(_page);
+    _hasMoreRecords = newlist.length == limit;
+    _loading = false;
     notifyListeners();
   }
 }
