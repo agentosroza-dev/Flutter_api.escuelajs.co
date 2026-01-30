@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_platzi/logics/textsize_logic.dart';
 import 'package:my_platzi/logics/theme_logic.dart';
 import 'package:my_platzi/screens/product_screen.dart';
+import 'package:my_platzi/screens/search_product_screen.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -102,7 +103,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildBody() {
     return IndexedStack(
       index: _currentIndex,
-      children: [ProductScreen(), Container(), Container()],
+      children: [ProductScreen(), SearchProductScreen(), Container()],
     );
   }
 

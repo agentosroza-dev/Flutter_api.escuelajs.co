@@ -4,15 +4,9 @@ import 'package:http/http.dart' as http;
 import '../models/product_model.dart';
 
 class ProductService {
-
   final base = "https://api.escuelajs.co/api/v1";
 
-
-
-
-
   Future<List<Product>> getProducts({int page = 0, int limit = 20}) async {
-
     //page = 0, offset = 0 * 20 = 0, (page * limit)
     //page = 1, offset = 1 * 20 = 20, (page * limit)
     //page = 2, offset = 2 * 20 = 40, (page * limit)
@@ -32,12 +26,6 @@ class ProductService {
     }
   }
 
-
-
-
-
-
-
   Future<List<Product>> filterProductsByCategoryid({
     required String cid,
     int page = 0,
@@ -49,8 +37,7 @@ class ProductService {
 
     int offset = page * limit;
 
-    final url =
-        "$base/products?categoryid=$cid&offset=$offset&limit=$limit";
+    final url = "$base/products?categoryid=$cid&offset=$offset&limit=$limit";
     http.Response response = await http.get(Uri.parse(url));
     try {
       if (response.statusCode == 200) {
@@ -63,24 +50,18 @@ class ProductService {
     }
   }
 
-
-
-  
-  Future<List<Product>> filterProductsByTitleAndByCategoryid({
+  Future<List<Product>> searchProductsByTitleAndCategoryId({
     required String title,
     String? cid,
     int page = 0,
     int limit = 20,
   }) async {
-    //page = 0, offset = 0 * 20 = 0, (page * limit)
-    //page = 1, offset = 1 * 20 = 20, (page * limit)
-    //page = 2, offset = 2 * 20 = 40, (page * limit)
-
     int offset = page * limit;
 
-    String categoryid = cid != null ? "&categoryid=$cid" : "";
+    String categoryId = cid != null ? "&categoryId=$cid" : "";
+
     final url =
-        "$base/products?title=$title$categoryid&offset=$offset&limit=$limit";
+        "$base/products?title=$title&offset=$offset&limit=$limit$categoryId";
     http.Response response = await http.get(Uri.parse(url));
     try {
       if (response.statusCode == 200) {
@@ -92,8 +73,4 @@ class ProductService {
       throw Exception("Network Error: ${e.toString()}");
     }
   }
-
-
-
-
 }
