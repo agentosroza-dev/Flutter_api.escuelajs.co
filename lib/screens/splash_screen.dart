@@ -28,17 +28,17 @@ class _SplashScreenState extends State<SplashScreen> {
     // ដាក់ Loading ចំនូន ២ វិនាទី
     final productLogic = context.read<ProductLogic>();
     final categoryLogic = context.read<CategoryLogic>();
-    // final themelogic = context.read<ThemeLogic>();
-    // final textsizelogic = context.read<TextsizeLogic>();
+    final themelogic = context.read<ThemeLogic>();
+    final textsizelogic = context.read<TextsizeLogic>();
     await Future.delayed(Duration(seconds: 2), () {});
     // ignore: use_build_context_synchronously
     return Future.any([
       productLogic.readProductPagination(),
       categoryLogic.read(),
-      context.read<ThemeLogic>().readTheme(),
-      context.read<TextsizeLogic>().readFontSize(),
-      // themelogic.readTheme(),
-      // textsizelogic.readFontSize(),
+      // context.read<ThemeLogic>().readTheme(),
+      // context.read<TextsizeLogic>().readFontSize(),
+      themelogic.readTheme(),
+      textsizelogic.readFontSize(),
     ]);
   }
 

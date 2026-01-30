@@ -47,7 +47,7 @@ class ProductLogic extends ChangeNotifier {
       //all
       newlist = await _service.getProducts(page: _page);
     } else {
-      newlist = await _service.filterProductsByCategoryId(
+      newlist = await _service.filterProductsByCategoryid(
         cid: _catId,
         page: _page,
       );

@@ -38,7 +38,7 @@ class ProductService {
 
 
 
-  Future<List<Product>> filterProductsByCategoryId({
+  Future<List<Product>> filterProductsByCategoryid({
     required String cid,
     int page = 0,
     int limit = 20,
@@ -50,7 +50,7 @@ class ProductService {
     int offset = page * limit;
 
     final url =
-        "$base/products?categoryId=$cid&offset=$offset&limit=$limit";
+        "$base/products?categoryid=$cid&offset=$offset&limit=$limit";
     http.Response response = await http.get(Uri.parse(url));
     try {
       if (response.statusCode == 200) {
@@ -66,4 +66,34 @@ class ProductService {
 
 
   
+  Future<List<Product>> filterProductsByTitleAndByCategoryid({
+    required String title,
+    String? cid,
+    int page = 0,
+    int limit = 20,
+  }) async {
+    //page = 0, offset = 0 * 20 = 0, (page * limit)
+    //page = 1, offset = 1 * 20 = 20, (page * limit)
+    //page = 2, offset = 2 * 20 = 40, (page * limit)
+
+    int offset = page * limit;
+
+    String categoryid = cid != null ? "&categoryid=$cid" : "";
+    final url =
+        "$base/products?title=$title$categoryid&offset=$offset&limit=$limit";
+    http.Response response = await http.get(Uri.parse(url));
+    try {
+      if (response.statusCode == 200) {
+        return compute(productFromJson, response.body);
+      } else {
+        throw Exception("Error status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Network Error: ${e.toString()}");
+    }
+  }
+
+
+
+
 }
