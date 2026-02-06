@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_platzi/screens/login_screen.dart';
 import 'package:my_platzi/theme/dark_theme.dart';
 import 'package:my_platzi/theme/light_theme.dart';
 import '../screens/main_screen.dart';
@@ -51,8 +52,10 @@ class _MyAppState extends State<MyApp> {
           darkTheme: darkTheme(values['scaleIndex']),
           onGenerateRoute: (settings) {
             switch (settings.name) {
-              case "/":
-                return MaterialPageRoute(builder: (context) => MainScreen());
+          case "/":
+            return MaterialPageRoute(builder: (context) => LoginScreen());
+          case "/main_screen":
+            return MaterialPageRoute(builder: (context) => MainScreen());
               default:
                 return MaterialPageRoute(
                   builder: (context) => Scaffold(
